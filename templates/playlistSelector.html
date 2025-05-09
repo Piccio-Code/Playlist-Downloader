@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+Select Playlist
+{% endblock %}
+
+{% block content %}
+
+    {% for playlist in playlists %}
+
+        <div>
+            <img src="{{ playlist["thumbnail_url"] }}" alt="thumbnail">
+            <p>{{ playlist["title"] }}</p>
+            <p>{{ playlist["url"] }}</p>
+        </div>
+
+    {% endfor %}
+
+
+{% endblock %}

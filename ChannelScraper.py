@@ -1,0 +1,20 @@
+from pytubefix import Channel, Playlist
+import requests
+
+
+class ChannelScraper:
+    def __init__(self, channel_url):
+        self.channel_url = channel_url
+        self.channel: Channel = None
+
+    def is_valid_url(self):
+        is_valid = requests.get(self.channel_url).status_code == 200
+
+        if is_valid:
+            self.channel = Channel(self.channel_url)
+
+        return is_valid
+
+
+    def get_playlists_dict(self):
+        return [{"title": playlist.title, "url": playlist.playlist_url, "thumbnail_url": playlist.thumbnail_url} for playlist in self.channel.playlists]
