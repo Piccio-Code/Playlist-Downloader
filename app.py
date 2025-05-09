@@ -1,8 +1,8 @@
-import os
-import shutil
-import zipfile
 from flask import Flask, render_template, session, request, send_file
 import pytubefix
+import os
+import zipfile
+import tempfile
 
 from ChannelScraper import ChannelScraper
 
@@ -16,20 +16,18 @@ def playlist():
     if request.method == "POST":
         selected_playlist = pytubefix.Playlist(request.form["selected_playlist"]).videos
 
-        DOWNLOAD_FILE_NAME = "downloads/" + pytubefix.Playlist(request.form["selected_playlist"]).title + ".zip"
-        TEMP_FILE_NAME = "downloads/playlist"
+        with tempfile.TemporaryDirectory(prefix="download", ignore_cleanup_errors=True) as download_folder:
+            for video in selected_playlist:
+                ys = video.streams.get_audio_only()
+                ys.download(download_folder + "\\playlist")
 
-        for video in selected_playlist:
-            ys = video.streams.get_audio_only()
-            ys.download(TEMP_FILE_NAME)
+            print(os.listdir(download_folder + "\\playlist"))
+            with zipfile.ZipFile(download_folder + "\\file.zip", "w") as f:
+                for file in os.listdir(download_folder + "\\playlist"):
+                    song = download_folder + "\\playlist\\" + file
+                    f.write(song, "\\Playlist" + file.title())
 
-        with zipfile.ZipFile(DOWNLOAD_FILE_NAME, "w") as f:
-            for file in os.listdir(TEMP_FILE_NAME):
-                f.write(TEMP_FILE_NAME + "/" + file)
-
-        return send_file(DOWNLOAD_FILE_NAME, as_attachment=True)
-
-    shutil.rmtree("downloads")
+            return send_file(download_folder + "\\file.zip", as_attachment=True)
 
     session["url"] = "https://www.youtube.com/@lorenzopiccini5423"
 
