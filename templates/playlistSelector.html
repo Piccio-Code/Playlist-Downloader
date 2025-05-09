@@ -6,15 +6,18 @@ Select Playlist
 
 {% block content %}
 
-    {% for playlist in playlists %}
 
-        <div>
-            <img src="{{ playlist["thumbnail_url"] }}" alt="thumbnail">
-            <p>{{ playlist["title"] }}</p>
-            <p>{{ playlist["url"] }}</p>
-        </div>
+    <form action="#" method="post">
+        {% for playlist in playlists %}
+            <label>
+                <img src="{{ playlist.thumbnail_url }}" alt="thumbnail">
+            </label>
 
-    {% endfor %}
+            <button  type="submit" name="selected_playlist" value="{{ playlist["url"] }}">
+                Select Playlist
+            </button>
+        {% endfor %}
+    </form>
 
 
 {% endblock %}
