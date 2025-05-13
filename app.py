@@ -16,8 +16,6 @@ app.secret_key = "hello"
 @app.route('/', methods = ["POST", "GET"])
 
 def playlist():
-
-
     if request.method == "POST":
         selected_playlist = pytubefix.Playlist(request.form["selected_playlist"]).videos
 
