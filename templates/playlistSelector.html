@@ -1,23 +1,47 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Playlist - Dark Mode</title>
+    <link rel="stylesheet" type="text/css" href="/static/playlistSelector.css">
+</head>
+<body>
+<header>
+    <h1>Select Your Playlist</h1>
+    <p>Choose a playlist to download</p>
+</header>
 
-{% block title %}
-Select Playlist
-{% endblock %}
-
-{% block content %}
-
-
+<main class="container">
     <form action="#" method="post">
-        {% for playlist in playlists %}
-            <label>
-                <img src="{{ playlist.thumbnail_url }}" alt="thumbnail">
-            </label>
+        <div class="playlist-grid">
+            {% for playlist in playlists %}
+                <div class="playlist-card">
+                    <label class="thumbnail-wrapper">
+                        <img src="{{ playlist.thumbnail_url }}" alt="Playlist thumbnail">
+                    </label>
 
-            <button  type="submit" name="selected_playlist" value="{{ playlist["url"] }}">
-                Select Playlist
-            </button>
-        {% endfor %}
+                    <div class="playlist-info">
+                        <div class="playlist-title">{{ playlist.title }}</div>
+
+
+                        <button type="submit" name="selected_playlist" value="{{ playlist.url }}"
+                                class="select-btn pulse">
+                                Select Playlist
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </form>
+</main>
 
-
-{% endblock %}
+<script>
+    document.querySelectorAll('.select-btn').forEach(btn => {
+        btn.addEventListener('mouseover', () => {
+            btn.classList.remove('pulse');
+        });
+    });
+</script>
+</body>
+</html>
