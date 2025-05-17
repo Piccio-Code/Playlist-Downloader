@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/mainPageStylesheet.css">
+</head>
+<body>
+    <!-- Aurora Background -->
+    <div class="aurora-background">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-layer aurora-layer-4"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container" id="main">
+        <header class="page-header">
+            <h1>Channel Search</h1>
+            <p>Enter your channel URL below</p>
+        </header>
+
+        <div class="cosmic-card">
+            <div class="input-group">
+                <input id="channel" type="text" class="cosmic-input" placeholder="Enter channel URL..." aria-label="Channel URL">
+            </div>
+
+            <button onclick="send()" class="cosmic-button">
+                <span class="cosmic-button__text">Search Channel</span>
+                <span class="cosmic-button__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px">
+                        <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4v3z"></path>
+                    </svg>
+                </span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Cosmic Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="cosmic-loader">
+            <div class="cosmic-spinner">
+                <div class="cosmic-spinner__ring"></div>
+                <div class="cosmic-spinner__ring"></div>
+                <div class="cosmic-spinner__ring"></div>
+                <div class="cosmic-spinner__planet"></div>
+                <div class="cosmic-spinner__stars">
+                    <div class="star star--1"></div>
+                    <div class="star star--2"></div>
+                    <div class="star star--3"></div>
+                    <div class="star star--4"></div>
+                    <div class="star star--5"></div>
+                    <div class="star star--6"></div>
+                </div>
+            </div>
+            <p>Exploring youtube</p>
+        </div>
+    </div>
+
+    <script>
+        async function send() {
+            const channel = document.getElementById("channel");
+            const loading = document.getElementById("loading");
+            const main = document.getElementById("main");
+
+            // Validate input - simple check if there's a value
+            if (!channel.value.trim()) {
+                // Subtle animation to indicate validation error
+                channel.classList.add('cosmic-input--error');
+                setTimeout(() => channel.classList.remove('cosmic-input--error'), 800);
+                return;
+            }
+
+            // Show loading state with animation
+            loading.classList.add('loading-overlay--active');
+            main.style.visibility = "hidden";
+
+            try {
+                const response = await fetch("/send_url/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({"url": channel.value})
+                });
+
+                const json = await response.json();
+                channel.value = "";
+
+                // Add minimum loading time to ensure animation is visible
+                const minLoadTime = 1500; // 1.5 seconds minimum loading time
+                const loadingStartTime = Date.now();
+                const timeElapsed = Date.now() - loadingStartTime;
+
+                if (timeElapsed < minLoadTime) {
+                    // Wait for the remaining time to complete minimum loading duration
+                    await new Promise(resolve => setTimeout(resolve, minLoadTime - timeElapsed));
+                }
+
+                const a = document.createElement("a");
+
+                if (!json["isFailed"]) {
+                    a.href = "{{ url }}";
+                } else {
+                    a.href = "#";
+                }
+
+                a.click();
+            } catch (error) {
+                console.error("Error:", error);
+
+                // Show error message to user
+                alert("There was an error processing your request. Please try again.");
+            } finally {
+                // Add a slight delay before hiding the loader
+                setTimeout(() => {
+                    // Start hiding animation
+                    loading.classList.add('loading-overlay--hiding');
+
+                    // After animation completes, remove classes
+                    setTimeout(() => {
+                        loading.classList.remove('loading-overlay--active');
+                        loading.classList.remove('loading-overlay--hiding');
+                        main.style.visibility = "visible";
+                    }, 500); // This matches your CSS transition duration
+                }, 1500); // Small additional delay for better user experience
+            }
+        }
+    </script>
+</body>
+</html>

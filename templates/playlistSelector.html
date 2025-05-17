@@ -63,10 +63,6 @@
         selectButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 btn.classList.add('select-btn--clicked');
-                btn.id = "selected_playlist";
-
-                document.getElementById("main").style.visibility = "hidden";
-                document.getElementById("downloading").style.visibility = "visible";
 
                 download(btn.value)
 
@@ -78,17 +74,23 @@
     });
 
     async function download(value) {
-        const response = await fetch("get_files/", {
+        document.getElementById("main").style.visibility = "hidden";
+        document.getElementById("downloading").style.visibility = "visible";
+
+        console.log(value)
+
+        const response = await fetch("/get_files/", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'accept': "*/*"
             },
             body: JSON.stringify({"url": value})
         });
 
         const file = await response.blob();
 
-        console.log(file.type)
+        console.log(file)
 
         const url = URL.createObjectURL(file)
 
@@ -99,6 +101,11 @@
         download_link.click()
 
         URL.revokeObjectURL(url)
+
+        document.getElementById("main").style.visibility = "visible";
+        document.getElementById("downloading").style.visibility = "hidden";
+
+
     }
 
 </script>

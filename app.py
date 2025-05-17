@@ -1,7 +1,8 @@
 import shutil
 import time
 from multiprocessing.pool import ThreadPool
-from operator import length_hint
+
+from click.shell_completion import ShellCompleteType
 from flask import Flask, render_template, session, request, send_file, redirect, url_for, jsonify
 import pytubefix
 import os
@@ -12,18 +13,19 @@ from ChannelScraper import ChannelScraper
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = "hello"
 
-
-@app.route('/home/')
+@app.route("/home/")
 @app.route('/')
-def playlist():
-    session["url"] = "https://www.youtube.com/@lorenzopiccini5423"
-    playlist_scraper = ChannelScraper(session["url"])
+def channel_selector():
+    return render_template("mainPage.html", url = url_for("playlist"))
 
-    if not playlist_scraper.is_valid_url():
-        return "Invalid URL"
+@app.route('/playlist_selector/')
+def playlist():
+    playlist_scraper = ChannelScraper(session["url"])
+    playlist_scraper.is_valid_url()
 
     session["playlist_dict"] = playlist_scraper.get_playlists_dict()
-    return render_template("playlistSelector.html", playlists=playlist_scraper.get_playlists_dict())
+
+    return render_template("playlistSelector.html", playlists=playlist_scraper.get_playlists_dict(), url_main_page=url_for("channel_selector"))
 
 @app.route("/get_files/", methods=["POST"])
 def get_files():
@@ -46,9 +48,24 @@ def get_files():
                 zipf.write(song_path, os.path.join("playlist", file))
 
         try:
-            return send_file(zip_path, as_attachment=True, download_name="playlist.zip")
+            return send_file(zip_path, as_attachment=True)
         finally:
             shutil.rmtree(download_folder, ignore_errors=True)
+
+@app.route("/send_url/", methods = ["POST"])
+def send_url():
+    url = request.json.get("url")
+
+    if "https://" not in url:
+        return {"isFailed": True}
+
+    playlist_scraper = ChannelScraper(url)
+
+    if not playlist_scraper.is_valid_url():
+        return {"isFailed": True}
+
+    session["url"] = url
+    return {"isFailed": False}
 
 
 def download(info):
