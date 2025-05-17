@@ -1,237 +1,485 @@
+/* playlistSelector.css - Design Cosmico Sbalorditivo */
+
+/* --- Variabili Root --- */
 :root {
-    --bg-primary: #121212;
-    --bg-secondary: #1e1e1e;
-    --accent-color: #1db954;
-    --text-primary: #ffffff;
-    --text-secondary: #b3b3b3;
-    --card-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    --hover-transition: 0.3s ease all;
+    --bg-deep-space: #020010; /* Nero-bluastro profondo */
+    --bg-nebula-soft: #0d0525; /* Viola scuro per elementi card */
+    --bg-glass-tint: rgba(18, 8, 40, 0.6); /* Tinta per effetto vetro */
+
+    --accent-primary: #a855f7; /* Viola vibrante (Tailwind purple-500) */
+    --accent-secondary: #ec4899; /* Rosa vibrante (Tailwind pink-500) */
+    --accent-glow: rgba(168, 85, 247, 0.5);
+    --accent-glow-secondary: rgba(236, 72, 153, 0.4);
+
+    --text-starbright: #f0f0ff; /* Bianco leggermente tendente al lavanda */
+    --text-cosmic-dust: #c0b8d0; /* Grigio lavanda chiaro */
+    --text-nebula-deep: #1f103a; /* Testo scuro per contrasto su elementi chiari */
+
+    --font-body: 'Poppins', 'Segoe UI', 'Roboto', sans-serif;
+    --font-display: 'Orbitron', 'Poppins', sans-serif; /* Orbitron per titoli */
+
+    --shadow-medium: 0 10px 25px rgba(0,0,0,0.3), 0 5px 10px rgba(0,0,0,0.2);
+    --shadow-interactive: 0 12px 35px var(--accent-glow), 0 0 30px var(--accent-glow-secondary) inset;
+
+    --transition-smooth: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition-elastic: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
+/* --- Reset e Stili Base --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Segoe UI', 'Roboto', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.6;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+html {
+    scroll-behavior: smooth;
 }
 
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-deep-space);
+    color: var(--text-starbright);
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative; /* Per lo sfondo aurora */
+}
+
+/* --- Sfondo Aurora Animato --- */
+.aurora-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Dietro a tutto */
+}
+
+.aurora-layer {
+    position: absolute;
+    opacity: 0;
+    mix-blend-mode: screen; /* O 'overlay', 'color-dodge' per effetti diversi */
+    animation-duration: 12s; /* Durata più lunga per un effetto sottile */
+    animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955); /* Smooth in-out */
+    animation-iteration-count: infinite;
+    filter: blur(80px); /* Blur intenso */
+}
+
+.aurora-layer-1 {
+    width: 60vmax; height: 60vmax;
+    background: radial-gradient(circle, var(--accent-primary) 0%, transparent 60%);
+    top: 10vh; left: 10vw;
+    animation-name: auroraFloat1;
+    animation-delay: 0s;
+}
+.aurora-layer-2 {
+    width: 50vmax; height: 50vmax;
+    background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 55%);
+    top: 30vh; right: 5vw;
+    animation-name: auroraFloat2;
+    animation-delay: -4s;
+}
+.aurora-layer-3 {
+    width: 45vmax; height: 45vmax;
+    background: radial-gradient(circle, #55f7d5 0%, transparent 65%); /* Un terzo colore */
+    bottom: 5vh; left: 25vw;
+    animation-name: auroraFloat3;
+    animation-delay: -8s;
+}
+.aurora-layer-4 {
+    width: 55vmax; height: 55vmax;
+    background: radial-gradient(circle, var(--accent-primary) 0%, transparent 60%);
+    bottom: 20vh; right: 30vw;
+    animation-name: auroraFloat4;
+    animation-delay: -6s;
+}
+
+@keyframes auroraFloat1 { 0%, 100% { opacity: 0.3; transform: translate(0,0) scale(1); } 50% { opacity: 0.6; transform: translate(20px, 30px) scale(1.1); } }
+@keyframes auroraFloat2 { 0%, 100% { opacity: 0.25; transform: translate(0,0) scale(1); } 50% { opacity: 0.5; transform: translate(-25px, -15px) scale(1.05); } }
+@keyframes auroraFloat3 { 0%, 100% { opacity: 0.2; transform: translate(0,0) scale(1); } 50% { opacity: 0.45; transform: translate(15px, -20px) scale(1.1); } }
+@keyframes auroraFloat4 { 0%, 100% { opacity: 0.3; transform: translate(0,0) scale(1); } 50% { opacity: 0.55; transform: translate(-20px, 25px) scale(1.08); } }
+
+
+/* --- Contenitore Principale --- */
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1350px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 3rem 2rem;
+    position: relative; /* Per essere sopra lo sfondo aurora */
+    z-index: 1;
 }
 
-header {
-    padding: 2rem 0;
+/* --- Header Pagina --- */
+.page-header {
     text-align: center;
-    background-color: rgba(0,0,0,0.2);
-    box-shadow: var(--card-shadow);
-    margin-bottom: 2rem;
+    margin-bottom: 3.5rem;
 }
-
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(90deg, var(--accent-color), #4e8cf5);
+.page-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem); /* Responsive */
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--text-starbright), var(--accent-secondary), var(--accent-primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    animation: textShine 8s linear infinite;
+    background-size: 200% auto;
+}
+@keyframes textShine { to { background-position: -200% center; } }
+
+.page-header p {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--text-cosmic-dust);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-header p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
+/* --- Form e Griglia Playlist --- */
+.playlist-selector {
+    transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+.playlist-selector.form-hiding {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+    pointer-events: none;
 }
 
 .playlist-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem; /* Aumentato per più respiro */
 }
 
+/* --- Stile Card Playlist --- */
 .playlist-card {
-    background-color: var(--bg-secondary);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: var(--hover-transition);
-    box-shadow: var(--card-shadow);
-    height: 100%;
+    background: var(--bg-glass-tint);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 20px;
+    border: 1px solid rgba(168, 85, 247, 0.2); /* Bordo viola traslucido */
+    box-shadow: var(--shadow-medium);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     position: relative;
+    transform-style: preserve-3d; /* Per effetti 3D */
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+    opacity: 0;
+    transform: perspective(1000px) rotateY(-10deg) scale(0.9) translateX(-20px);
+    animation: cardEnter 0.6s var(--transition-elastic) forwards;
+    animation-delay: calc(var(--card-index, 0) * 0.1s); /* Animazione scalata */
+}
+
+@keyframes cardEnter {
+    to {
+        opacity: 1;
+        transform: perspective(1000px) rotateY(0deg) scale(1) translateX(0px);
+    }
 }
 
 .playlist-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    transform: perspective(1000px) translateY(-12px) rotateX(2deg) rotateY(-2deg) scale(1.03);
+    box-shadow: var(--shadow-interactive);
+    border-color: var(--accent-glow);
 }
 
-.playlist-card:hover .thumbnail-wrapper::before {
-    opacity: 0.6;
-}
-
-.thumbnail-wrapper {
-    position: relative;
+.playlist-card__thumbnail-container {
     width: 100%;
     padding-top: 66.67%; /* Aspect ratio 3:2 */
+    position: relative;
     overflow: hidden;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+    transform: translateZ(20px); /* Leggero effetto 3D */
 }
 
-.thumbnail-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
-    z-index: 1;
-    opacity: 0.4;
-    transition: var(--hover-transition);
-}
-
-.playlist-card img {
+.playlist-card__image {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--hover-transition);
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); /* Transizione più smooth per lo zoom */
+}
+.playlist-card:hover .playlist-card__image {
+    transform: scale(1.15) rotate(1deg);
 }
 
-.playlist-card:hover img {
-    transform: scale(1.05);
-}
-
-.playlist-info {
-    padding: 1.5rem;
+.playlist-card__thumbnail-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 50%, rgba(8, 2, 20, 0.8) 100%);
+    opacity: 0.8;
+    transition: opacity var(--transition-smooth);
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+.playlist-card:hover .playlist-card__thumbnail-overlay {
+    opacity: 1;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(8, 2, 20, 0.7) 100%);
+}
+.play-icon-overlay {
+    width: 50px;
+    height: 50px;
+    color: rgba(255,255,255,0.7);
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+}
+.playlist-card:hover .play-icon-overlay {
+    opacity: 1;
+    transform: scale(1);
 }
 
-.playlist-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+
+.playlist-card__content {
+    padding: 1.5rem 1.8rem;
+    flex-grow: 1;
+    transform: translateZ(10px); /* Leggero effetto 3D */
+}
+
+.playlist-card__title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--text-starbright);
     margin-bottom: 0.5rem;
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
-.playlist-meta {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+.playlist-card__meta {
+    font-size: 0.85rem;
+    color: var(--text-cosmic-dust);
 }
 
+.playlist-card__action {
+    padding: 0 1.8rem 1.8rem;
+    margin-top: auto; /* Spinge in basso */
+    transform: translateZ(5px);
+}
+
+/* --- Pulsante di Selezione --- */
 .select-btn {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 0.8rem 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--hover-transition);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    margin-top: auto;
-}
-
-.select-btn:hover {
-    background-color: #16a549;
-    transform: scale(1.02);
-}
-
-.select-btn:focus {
+    background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--text-starbright); /* Testo chiaro per contrasto */
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 12px; /* Bordi meno arrotondati per un look più affilato */
+    padding: 0.9rem 1.5rem;
+    cursor: pointer;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.5);
+    position: relative;
+    overflow: hidden; /* Per l'effetto ripple e glow */
+    transition: transform 0.2s ease-out, box-shadow var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 var(--accent-glow); /* Glow iniziale per animazione idle */
+    animation: idleButtonGlow 3s infinite ease-in-out; /* Animazione idle */
+}
+@keyframes idleButtonGlow {
+    0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 8px 0px var(--accent-glow); }
+    50% { box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 16px 3px var(--accent-glow); }
 }
 
-.pulse {
-    animation: pulse 2s infinite;
+.select-btn:hover:not(.select-btn--clicked) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 20px 5px var(--accent-glow), 0 0 15px 2px var(--accent-glow-secondary) inset;
+    animation-play-state: paused; /* Pausa l'animazione idle all'hover */
+}
+.select-btn:active:not(.select-btn--clicked) {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.select-btn--clicked { /* Animazione al click */
+    animation: buttonClickFeedback 0.4s ease-out;
+}
+@keyframes buttonClickFeedback {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.92); }
+    100% { transform: scale(1); }
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(29, 185, 84, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(29, 185, 84, 0);
+.select-btn__text {
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+}
+.select-btn__icon {
+    display: inline-flex;
+    transition: transform 0.3s ease;
+}
+.select-btn:hover .select-btn__text {
+    transform: translateX(-2px);
+}
+.select-btn:hover .select-btn__icon {
+    transform: translateX(2px) rotate(0deg); /* Rimuove rotazione se non desiderata */
+}
+
+
+/* --- Barra di Progresso --- */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(var(--bg-deep-space), 0.85);
+    backdrop-filter: blur(12px) brightness(0.6);
+    -webkit-backdrop-filter: blur(12px) brightness(0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.progress-bar__content {
+    text-align: center;
+    color: var(--text-starbright);
+}
+
+.progress-bar__spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    height: 40px; /* Altezza definita per contenere i punti */
+}
+.spinner-dot {
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: bounceDot 1.4s infinite ease-in-out both;
+}
+.spinner-dot:nth-child(1) { animation-delay: -0.32s; }
+.spinner-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounceDot {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); background-color: var(--accent-primary); }
+    60% { background-color: var(--accent-secondary); } /* Cambio colore durante l'animazione */
+}
+
+.progress-bar__text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: textFadeInOut 2s infinite ease-in-out;
+}
+@keyframes textFadeInOut {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* --- Stili per il Div #downloading --- */
+#downloading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Utilizzo una versione leggermente più opaca di --bg-deep-space per lo sfondo */
+    background-color: rgba(2, 0, 16, 0.92); /* var(--bg-deep-space) is #020010 */
+    backdrop-filter: blur(10px) brightness(0.65);
+    -webkit-backdrop-filter: blur(10px) brightness(0.65);
+    display: flex;
+    flex-direction: column; /* Per impilare lo spinner (pseudo-elemento) e il testo */
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Assicura che sia sopra gli altri contenuti */
+    /* La visibilità è gestita via JavaScript (hidden/visible) */
+}
+
+#downloading::before { /* Questo sarà il nostro spinner animato */
+    content: "";
+    display: block;
+    width: 60px;  /* Dimensione dello spinner */
+    height: 60px; /* Dimensione dello spinner */
+    border-radius: 50%;
+    border: 6px solid rgba(168, 85, 247, 0.25); /* Colore base del bordo (var(--accent-primary) traslucido) */
+    border-left-color: var(--accent-secondary); /* Parte colorata dello spinner (rosa) */
+    border-top-color: var(--accent-primary);    /* Parte colorata principale dello spinner (viola) */
+    animation: cosmicSpinner 1.2s linear infinite; /* Animazione di rotazione */
+}
+
+@keyframes cosmicSpinner {
+    to {
+        transform: rotate(360deg);
     }
 }
 
-/* Responsive adjustments */
+#downloading p {
+    font-family: var(--font-display); /* Font Orbitron per un look cosmico */
+    font-size: clamp(1.5rem, 4vw, 2rem); /* Dimensione del testo responsiva */
+    font-weight: 500;
+    color: var(--text-starbright);
+    letter-spacing: 0.8px;
+    text-align: center;
+    margin-top: 2rem; /* Spazio tra lo spinner e il testo */
+    animation: textFadeInOut 2.2s infinite ease-in-out; /* Riutilizzo l'animazione esistente, leggermente variata o uguale */
+}
+
+
+/* --- Scrollbar Personalizzata --- */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: rgba(var(--bg-nebula-soft),0.5); border-radius: 10px; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 10px;
+    border: 2px solid transparent; /* Spazio dal track */
+    background-clip: content-box; /* Fa sì che il bordo sia "vuoto" */
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); /* Inverti gradiente all'hover */
+    background-clip: content-box;
+}
+
+
+/* --- Media Queries per Responsività --- */
+@media (max-width: 992px) {
+    .container { padding: 2.5rem 1.5rem; }
+    .playlist-grid { gap: 2rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));}
+    .playlist-card__title { font-size: 1.25rem; }
+}
+
 @media (max-width: 768px) {
-    .playlist-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.5rem;
-    }
+    .container { padding: 2rem 1rem; }
+    .page-header h1 { font-size: clamp(2rem, 8vw, 2.8rem); }
+    .page-header p { font-size: clamp(0.9rem, 3vw, 1.1rem); }
+    .playlist-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+    .playlist-card { border-radius: 16px; }
+    .playlist-card__content { padding: 1.2rem 1.5rem; }
+    .playlist-card__action { padding: 0 1.5rem 1.5rem; }
+    .select-btn { font-size: 0.9rem; padding: 0.8rem 1.2rem; }
+    .progress-bar__text { font-size: 1.3rem; } /* Potresti volerlo anche per #downloading p */
+    #downloading p { font-size: clamp(1.3rem, 3.5vw, 1.8rem); } /* Aggiustamento per mobile */
+    #downloading::before { width: 50px; height: 50px; border-width: 5px; } /* Spinner più piccolo su mobile */
 
-    .container {
-        padding: 1rem;
-    }
-
-    header {
-        padding: 1.5rem 0;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
 }
 
 @media (max-width: 480px) {
-    .playlist-grid {
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
-    }
-
-    .playlist-card {
-        max-width: 100%;
-    }
-
-    header h1 {
-        font-size: 1.8rem;
-    }
-
-    .playlist-info {
-        padding: 1.2rem;
-    }
-}
-
-/* Dark mode scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #2a2a2a;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    .playlist-grid { grid-template-columns: 1fr; } /* Una colonna */
+    .playlist-card { transform-style: flat; /* Rimuove 3D su mobile se causa problemi di performance */ }
+    .playlist-card:hover { transform: translateY(-8px) scale(1.02); /* Semplifica hover su mobile */ }
+    .page-header { margin-bottom: 2.5rem; }
+    .aurora-layer { filter: blur(60px); } /* Riduci blur per performance */
+    .progress-bar__text { font-size: 1.2rem; }
+    #downloading p { font-size: clamp(1.2rem, 3vw, 1.5rem); } /* Ulteriore aggiustamento per schermi piccoli */
+    #downloading::before { width: 40px; height: 40px; border-width: 4px; } /* Spinner ancora più piccolo */
 }

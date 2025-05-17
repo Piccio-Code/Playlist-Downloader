@@ -1,7 +1,5 @@
-import time
 from multiprocessing.pool import ThreadPool
 
-import pytubefix
 from pytubefix import Channel
 import requests
 

@@ -1,52 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="it"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Playlist - Dark Mode</title>
+    <title>Select Playlist</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/playlistSelector.css">
 </head>
 <body>
 
-<main class="container">
-    <form class = "playlist-selector" action="#" method="post">
-        <div class="playlist-grid">
-            {% for playlist in playlists %}
-                <div class="playlist-card">
-                    <label class="thumbnail-wrapper">
-                        <img src="{{ playlist.thumbnail_url }}" alt="Playlist thumbnail">
-                    </label>
-
-                    <div class="playlist-info">
-                        <div class="playlist-title">{{ playlist.title }}</div>
-
-                        <button type="submit" name="selected_playlist" value="{{ playlist.url }}"
-                                class="select-btn pulse">
-                                Select Playlist
-                        </button>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </form>
-
-    <div class="progress-bar" hidden>
-        Download Starting
+    <div class="aurora-background">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-layer aurora-layer-4"></div>
     </div>
-</main>
+
+    <main class="container" id="main">
+        <header class="page-header">
+            <h1>Chose the playlist to download</h1>
+        </header>
+
+        <div class="playlist-selector">
+            <div class="playlist-grid">
+                {% for playlist in playlists %}
+                    <div class="playlist-card" style="--card-index: {{ loop.index0 }};">
+                        <figure class="playlist-card__thumbnail-container">
+                            <img src="{{ playlist.thumbnail_url }}" alt="Copertina della playlist: {{ playlist.title }}" class="playlist-card__image">
+                            <div class="playlist-card__thumbnail-overlay">
+                                <svg class="play-icon-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"></path></svg>
+                            </div>
+                        </figure>
+                        <div class="playlist-card__content">
+                            <h3 class="playlist-card__title">{{ playlist.title }}</h3>
+                            </div>
+                        <div class="playlist-card__action">
+                            <button type="submit" name="selected_playlist" value="{{ playlist.url }}" class="select-btn">
+                                <span class="select-btn__text">Download</span>
+                                <span class="select-btn__icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px"><path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4v3z"></path></svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <div id="downloading">
+        <p>Is downloading...</p>
+        <p id="total-playlist-count"></p>
+    </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectButtons = document.querySelectorAll('.select-btn');
+        document.getElementById("downloading").style.visibility = "hidden";
 
-    document.querySelectorAll('.select-btn').forEach(btn => {
-        btn.addEventListener('mouseover', () => {
-            btn.classList.remove('pulse');
+        selectButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.add('select-btn--clicked');
+                btn.id = "selected_playlist";
+
+                document.getElementById("main").style.visibility = "hidden";
+                document.getElementById("downloading").style.visibility = "visible";
+
+                download(btn.value)
+
+                setTimeout(() => {
+                    btn.classList.remove('select-btn--clicked');
+                }, 400);
+            });
+        });
+    });
+
+    async function download(value) {
+        const response = await fetch("get_files/", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"url": value})
         });
 
-        btn.addEventListener('click', () => {
-             document.querySelector('.playlist-selector').style.display = 'none';
-             document.querySelector('.progress-bar').removeAttribute('hidden');
-        })
-    });
+        const file = await response.blob();
+
+        console.log(file.type)
+
+        const url = URL.createObjectURL(file)
+
+        const download_link = document.createElement("a")
+
+        download_link.href = url
+        download_link.download = "playlist.zip"
+        download_link.click()
+
+        URL.revokeObjectURL(url)
+    }
 
 </script>
 </body>
