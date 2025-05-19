@@ -1,9 +1,7 @@
 import shutil
-import time
 from multiprocessing.pool import ThreadPool
 
-from click.shell_completion import ShellCompleteType
-from flask import Flask, render_template, session, request, send_file, redirect, url_for, jsonify
+from flask import Flask, render_template, session, request, send_file, redirect, url_for
 import pytubefix
 import os
 import zipfile
@@ -16,10 +14,16 @@ app.secret_key = "hello"
 @app.route("/home/")
 @app.route('/')
 def channel_selector():
+    if "url" in session:
+        return redirect(url_for("playlist"))
+
     return render_template("mainPage.html", url = url_for("playlist"))
 
 @app.route('/playlist_selector/')
 def playlist():
+    if "url" not in session:
+        return redirect(url_for("channel_selector"))
+
     playlist_scraper = ChannelScraper(session["url"])
     playlist_scraper.is_valid_url()
 
@@ -34,7 +38,7 @@ def get_files():
         selected_playlist = pytubefix.Playlist(session["selected_playlist"])
         download_folder = tempfile.mkdtemp(prefix="download")
 
-        # Create the playlist folder
+
         playlist_folder = os.path.join(download_folder, "playlist")
         os.makedirs(playlist_folder, exist_ok=True)
 

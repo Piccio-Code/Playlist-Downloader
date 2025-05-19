@@ -5,12 +5,12 @@ import requests
 
 
 class ChannelScraper:
-    def __init__(self, channel_url):
+    def __init__(self, channel_url: str):
         self.channel_url = channel_url
         self.channel: Channel = None
 
     def is_valid_url(self):
-        is_valid = requests.get(self.channel_url).status_code == 200
+        is_valid = requests.get(self.channel_url).status_code == 200 and "https://www.youtube.com/@" in self.channel_url
 
         if is_valid:
             self.channel = Channel(self.channel_url)
