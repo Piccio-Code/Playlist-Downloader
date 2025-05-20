@@ -1,7 +1,6 @@
 import shutil
 from multiprocessing.pool import ThreadPool
 
-import youtube_dl
 from flask import Flask, render_template, session, request, send_file, redirect, url_for
 import pytubefix
 import os
@@ -74,16 +73,9 @@ def send_url():
 
 
 def download(info):
-    url = info[0]
-    download_folder = os.path.join(info[1], "playlist")
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': os.path.join(download_folder, '%(title)s.%(ext)s'),
-        'quiet': True,
-    }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    video = pytubefix.__main__.YouTube(info[0], use_po_token=True, po_token_verifier="MpQBNAu39XAyGiE0M666TURHZiLNVqcvy7E3LsQYcVK8-ZkAS5jKSoVNPcxiOo7VwOztVt5FRWyr3xEv8Vk9ztBxJLFNGdhWIuXaHbTB_BzmeW9yF7tEzlEzan7ZPwyCvzsXai5CUb2Jlx5ruCpGSBAeakzNJsWKoQ0DTz1bmFMOVUk-ykTZYR3KOzW4Cxm6CrdKiYDMag==")
+    download_folder = info[1]
+    video.streams.get_audio_only().download(os.path.join(download_folder, "playlist"))
 
 
 if __name__ == '__main__':
