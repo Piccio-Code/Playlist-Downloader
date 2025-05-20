@@ -27,20 +27,36 @@ A sleek **Flask web app** that allows users to explore a YouTube channel and dow
 ## 🗺️ App Workflow
 
 ```mermaid
-flowchart TD
-  A[User] -->|Enters channel URL| B(Flask /send_url)
-  B --> C{Is URL valid?}
-  C -->|Yes| D[Session stores URL]
-  D --> E[Playlist Selector page]
-  E --> F[ChannelScraper.get_playlists_dict()]
-  F --> G[Display playlists on frontend]
-  G -->|User selects playlist| H[POST to /get_files/]
-  H --> I[Initialize pytubefix.Playlist()]
-  I --> J[ThreadPool downloads audio]
-  J --> K[Create temp folder]
-  K --> L[ZIP audio files]
-  L --> M[Send ZIP to user]
-  C -->|No| N[Show error message]
+sequenceDiagram
+  participant U as User
+  participant B as Backend (Flask)
+  participant S as Session
+  participant CS as ChannelScraper
+  participant P as pytubefix.Playlist
+  participant T as ThreadPool
+  participant Z as ZIP Service
+
+  U->>B: POST /send_url {channel URL}
+  B->>CS: is_valid_url()
+  CS-->>B: URL valid/invalid
+  alt Valid
+    B->>S: store URL
+    B->>U: redirect to /playlist_selector
+    U->>B: GET /playlist_selector
+    B->>CS: get_playlists_dict()
+    CS-->>B: return playlists
+    B->>U: render playlists
+    U->>B: POST /get_files {playlist URL}
+    B->>P: initialize playlist
+    P-->>B: video list
+    B->>T: download audios in parallel
+    T-->>B: downloaded files
+    B->>Z: zip files
+    Z-->>B: playlist.zip
+    B->>U: send_file(playlist.zip)
+  else Invalid
+    B->>U: error message
+  end
 ```
 
 ---
