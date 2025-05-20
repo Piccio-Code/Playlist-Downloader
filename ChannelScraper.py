@@ -10,7 +10,7 @@ class ChannelScraper:
         self.channel: Channel = None
 
     def is_valid_url(self):
-        is_valid = requests.get(self.channel_url).status_code == 200 and "https://www.youtube.com/@" in self.channel_url
+        is_valid = requests.get(self.channel_url).status_code == 200 and "youtube.com" in self.channel_url
 
         if is_valid:
             self.channel = Channel(self.channel_url)
