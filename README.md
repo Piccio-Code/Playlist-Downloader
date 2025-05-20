@@ -129,5 +129,8 @@ python app.py
 ```
 
 ---
+## Legal
 
+- [Terms & Conditions](TERMS_AND_CONDITIONS.md)
+---
 Enjoy downloading your favorite YouTube playlists! 🎉
