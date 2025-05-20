@@ -77,8 +77,6 @@
         document.getElementById("main").style.visibility = "hidden";
         document.getElementById("downloading").style.visibility = "visible";
 
-        console.log(value)
-
         const response = await fetch("/get_files/", {
             method: "POST",
             headers: {
@@ -89,8 +87,6 @@
         });
 
         const file = await response.blob();
-
-        console.log(file)
 
         const url = URL.createObjectURL(file)
 
