@@ -73,7 +73,6 @@ def send_url():
 
 
 def download(info):
-    url = info[0]
     video = pytubefix.__main__.YouTube(info[0])
     download_folder = info[1]
     video.streams.get_audio_only().download(os.path.join(download_folder, "playlist"))
