@@ -1,5 +1,9 @@
 ## 📦 YouTube Channel & Playlist Downloader
 
+![image](https://github.com/user-attachments/assets/1ae41fad-2620-4ff0-913c-52a7a886df70)
+![image](https://github.com/user-attachments/assets/711e127b-71ed-4e77-a4ec-16d913eac344)
+
+
 A sleek **Flask web app** that allows users to explore a YouTube channel and download entire playlists as zipped audio files. ⚡
 
 ---
